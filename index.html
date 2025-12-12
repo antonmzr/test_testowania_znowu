@@ -71,29 +71,40 @@
 </form>
 
 <script>
-const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbw1XGYeOCthYrajNqnndEIB_OKpys_22m3ztqYy0XyJrC9WmlQovIBi0OE6Hlyk5PdO/exec"; 
+const SHEET_ID = "16bkrQoB7LZ7ukh7f9MIpozcGFRhYCSmJAlMwrdeL454";
+const API_KEY = "AIzaSyDD0upEhUgMU7mll_ydHSEJ6IqLc1m1114";
+const RANGE = "Arkusz1!A:C"; // zakładając 3 kolumny: q1, q2, q3
 
 function sendData() {
   const q1 = document.querySelector('input[name="q1"]:checked')?.value || "";
   const q2 = document.querySelector('input[name="q2"]:checked')?.value || "";
   const q3 = document.querySelector('input[name="q3"]:checked')?.value || "";
 
-  fetch(GOOGLE_URL, {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ q1, q2, q3 })   // MUSI BYĆ JSON
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}:append?valueInputOption=USER_ENTERED&key=${API_KEY}`;
+
+  const body = {
+    values: [
+      [new Date().toLocaleString(), q1, q2, q3]
+    ]
+  };
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
   })
   .then(r => r.json())
-  .then(() => {
+  .then(data => {
+    console.log("Wysłano:", data);
     alert("Dziękujemy! Wyniki wysłane.");
-    document.getElementById("quizForm").reset();
   })
   .catch(err => {
     console.error(err);
     alert("Błąd wysyłania — sprawdź konsolę.");
   });
 }
-
 </script>
 
 
