@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Test audio – ankieta</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    line-height: 1.6;
+  }
+  .question {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Test audio</h1>
+<p>Odsłuchaj nagrania i odpowiedz na pytania.</p>
+
+<form id="quizForm">
+
+  <!-- PYTANIE 1 -->
+  <div class="question">
+    <p><strong>1. Co słyszysz na nagraniu?</strong></p>
+    <audio controls>
+      <source src="audio/p1.wav" type="audio/wav">
+    </audio><br><br>
+
+    <label><input type="radio" name="q1" value="Opcja A"> Opcja A</label><br>
+    <label><input type="radio" name="q1" value="Opcja B"> Opcja B</label><br>
+    <label><input type="radio" name="q1" value="Opcja C"> Opcja C</label>
+  </div>
+
+  <!-- PYTANIE 2 -->
+  <div class="question">
+    <p><strong>2. Jak oceniasz jakość nagrania?</strong></p>
+    <audio controls>
+      <source src="audio/p2.wav" type="audio/wav">
+    </audio><br><br>
+
+    <label><input type="radio" name="q2" value="Dobra"> Dobra</label><br>
+    <label><input type="radio" name="q2" value="Średnia"> Średnia</label><br>
+    <label><input type="radio" name="q2" value="Zła"> Zła</label>
+  </div>
+
+  <!-- PYTANIE 3 -->
+  <div class="question">
+    <p><strong>3. Czy nagranie było wystarczająco głośne?</strong></p>
+    <audio controls>
+      <source src="audio/p3.wav" type="audio/wav">
+    </audio><br><br>
+
+    <label><input type="radio" name="q3" value="Tak"> Tak</label><br>
+    <label><input type="radio" name="q3" value="Nie"> Nie</label>
+  </div>
+
+  <button type="button" onclick="sendData()">Wyślij</button>
+
+</form>
+
+<script>
+const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbw1XGYeOCthYrajNqnndEIB_OKpys_22m3ztqYy0XyJrC9WmlQovIBi0OE6Hlyk5PdO/exec"; 
+
+function sendData() {
+  const q1 = document.querySelector('input[name="q1"]:checked')?.value || "";
+  const q2 = document.querySelector('input[name="q2"]:checked')?.value || "";
+  const q3 = document.querySelector('input[name="q3"]:checked')?.value || "";
+
+  fetch(GOOGLE_URL, {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ q1, q2, q3 })   // MUSI BYĆ JSON
+  })
+  .then(r => r.json())
+  .then(() => {
+    alert("Dziękujemy! Wyniki wysłane.");
+    document.getElementById("quizForm").reset();
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Błąd wysyłania — sprawdź konsolę.");
+  });
+}
+
+</script>
+
+
+</body>
+</html>
